@@ -6,18 +6,27 @@ phases:
       - sudo pip install anchorecli
   pre_build:
     commands:
-      - docker login -u $dockerhubUser -p $dockerhubPass
+      - echo logging into Amazon ECR
+      - aws --version
+      - $(aws ecr get login --region $AWS_DEFAULT_REGION -- no-include-email)
+      - REPOSITORY_URI= 377877851685.dkr.ecr.eu-west-1.amazonaws.com/anchore-codebuildproject
+      - COMMIT_HASH=$(echo $CODEDBUILD_RESOLVED_SOURCE_VERSION  |  cut -c 1-7 )
+      - IMAGE_TAG=build-$(echo $CODEDBUILD_BUILD_ID  |  awk -F”:” ‘{print $2}’ )
+
   build:
     commands:
-      - docker build -t jvalance/node_critical_fail .
-      - docker push jvalance/node_critical_fail
+      - echo Build started on  ‘date’
+      - echo Building the Docker image…
+      - docker build -t  REPOSITORY_URI:latest
+      - docker tag  $REPOSITORY_URI:latest $REPOSITORY_URI:$IMAGE_TAG
 
   post_build:
     commands:
-      - anchore-cli image add jvalance/node_critical_fail:latest
+      - echo Build completed on  ‘date’
+      - anchore-cli image add $REPOSITORY_URI:latest
       - echo "Waiting for image to finish analysis"
-      - anchore-cli image wait jvalance/node_critical_fail:latest
+      - anchore-cli image wait $REPOSITORY_URI:latest
       - echo "Analysis complete"
-      - if [ "$ANCHORE_FAIL_ON_POLICY" = "true" ] ; then anchore-cli evaluate check jvalance/node_critical_fail:latest  ; fi
-      - echo "Pushing image to Docker Hub"
-      - docker push jvalance/node_critical_fail
+      - if [ "$ANCHORE_FAIL_ON_POLICY" = "true" ] ; then anchore-cli evaluate check $REPOSITORY_URI:latest  ; fi
+      - echo "Pushing the docker images”     
+      - docker push $REPOSITORY_URI:latest
