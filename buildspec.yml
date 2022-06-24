@@ -14,7 +14,7 @@ phases:
 
   build:
     commands:
-      - echo Build started on  ‘date’
+      - echo Build started on  `date`
       - echo Building the Docker image…
       - REPOSITORY_URI= 377877851685.dkr.ecr.eu-west-1.amazonaws.com/anchore-codebuildproject
       - docker build -t  REPOSITORY_URI:latest
@@ -22,7 +22,7 @@ phases:
 
   post_build:
     commands:
-      - echo Build completed on  ‘date’
+      - echo Build completed on  `date`
       - anchore-cli image add $REPOSITORY_URI:latest
       - echo "Waiting for image to finish analysis"
       - anchore-cli image wait $REPOSITORY_URI:latest
