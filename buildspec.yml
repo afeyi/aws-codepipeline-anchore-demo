@@ -3,9 +3,9 @@ version: 0.2
 phases:
   install:
     commands:
-      - sudo apt-get update -y
-      - sudo apt-get -y install python3-pip
-      - sudo pip3 install anchorecli
+      - apt-get update -y
+      - apt-get -y install python3-pip
+      - pip3 install anchorecli
   pre_build:
     commands:
       - echo logging into Amazon ECR
