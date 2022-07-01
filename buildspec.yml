@@ -26,11 +26,7 @@ phases:
   post_build:
     commands:
       - echo Build completed on  `date`
-      - anchore-cli registry add /
-            377877851685.dkr.ecr.eu-west-1.amazonaws.com /
-             MY_AWS_ACCESS_KEY_ID /
-             MY_AWS_SECRET_ACCESS_KEY /
-             --registry-type=awsecr
+      - anchore-cli registry add 377877851685.dkr.ecr.eu-west-1.amazonaws.com REGISTRY_USER $MY_AWS_ACCESS_KEY_ID REGISTRY_PASS $MY_AWS_SECRET_ACCESS_KEY --registry-type=awsecr
       - anchore-cli image add $REPOSITORY_URI:latest
       - echo "Waiting for image to finish analysis"
       - anchore-cli image wait $REPOSITORY_URI:latest
