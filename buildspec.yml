@@ -38,11 +38,7 @@ phases:
       #- if [ "$ANCHORE_FAIL_ON_POLICY" = "true" ] ; then anchore-cli evaluate check $REPOSITORY_URI:latest  ; fi
       - echo "Pushing the docker images”     
       - docker push $REPOSITORY_URI:latest
-      
-    finally:
-      - anchore-cli registry del 377877851685.dkr.ecr.eu-west-1.amazonaws.com
-      - ls -la
-      - aws s3 cp $REPOSITORY_URI:content.txt s3://kunle-test/Anchore/
-      - aws s3 cp $REPOSITORY_URI:vuln.txt s3://kunle-test/Anchore/
-      - echo "results of the SBOM and vulnerability sent to S3!"
+artifacts:
+  files:
+    - anchoretest
       
